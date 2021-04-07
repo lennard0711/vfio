@@ -4,7 +4,7 @@ In this repo you can find everything about my VFIO setup. I mainly use it for ga
 I mostly used the Arch Wiki to setup everything, especially this page: [PCI passthrough via OVMF](https://wiki.archlinux.org/index.php/PCI_passthrough_via_OVMF)
 
 ## TODOs
-- [ ] Create QEMU hooks to disable host screen 1 after booting the VM
+- [x] Create QEMU hooks to disable host screen 1 after booting the VM
 - [ ] Pass through USB controller for hotplugging support in the VM
 - [ ] Document mainboard settings
 - [ ] Isolate pinned CPUs
