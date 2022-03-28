@@ -5,9 +5,9 @@ I mostly used the Arch Wiki to setup everything, especially this page: [PCI pass
 
 ## TODOs
 - [x] Create QEMU hooks to disable host screen 1 after booting the VM
+- [x] Isolate pinned CPUs
 - [ ] Pass through USB controller for hotplugging support in the VM
 - [ ] Document mainboard settings
-- [ ] Isolate pinned CPUs
 
 ## Hardware
 
