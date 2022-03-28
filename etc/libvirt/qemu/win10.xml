@@ -5,7 +5,7 @@ OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
 or other application using the libvirt API.
 -->
 
-<domain type='kvm' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
+<domain type='kvm'>
   <name>win10</name>
   <uuid>6aae4304-6385-4304-b5fe-b930c25a08c1</uuid>
   <metadata>
@@ -40,7 +40,7 @@ or other application using the libvirt API.
   <features>
     <acpi/>
     <apic/>
-    <hyperv>
+    <hyperv mode='custom'>
       <relaxed state='on'/>
       <vapic state='on'/>
       <spinlocks state='on' retries='8191'/>
@@ -118,8 +118,11 @@ or other application using the libvirt API.
       <gl enable='no'/>
     </graphics>
     <sound model='ich9'>
+      <codec type='micro'/>
+      <audio id='1'/>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
     </sound>
+    <audio id='1' type='pulseaudio' serverName='/run/user/1000/pulse/native'/>
     <video>
       <model type='none'/>
     </video>
@@ -137,13 +140,6 @@ or other application using the libvirt API.
     </hostdev>
     <hostdev mode='subsystem' type='usb' managed='yes'>
       <source>
-        <vendor id='0x0a12'/>
-        <product id='0x0001'/>
-      </source>
-      <address type='usb' bus='0' port='3'/>
-    </hostdev>
-    <hostdev mode='subsystem' type='usb' managed='yes'>
-      <source>
         <vendor id='0x046d'/>
         <product id='0xc53d'/>
       </source>
@@ -152,16 +148,16 @@ or other application using the libvirt API.
     <hostdev mode='subsystem' type='usb' managed='yes'>
       <source>
         <vendor id='0x046d'/>
-        <product id='0xc539'/>
-      </source>
-      <address type='usb' bus='0' port='2'/>
-    </hostdev>
-    <hostdev mode='subsystem' type='usb' managed='yes'>
-      <source>
-        <vendor id='0x046d'/>
         <product id='0xc087'/>
       </source>
       <address type='usb' bus='0' port='6'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='usb' managed='yes'>
+      <source>
+        <vendor id='0x0a12'/>
+        <product id='0x0001'/>
+      </source>
+      <address type='usb' bus='0' port='2'/>
     </hostdev>
     <redirdev bus='usb' type='spicevmc'>
       <address type='usb' bus='0' port='4'/>
@@ -173,8 +169,4 @@ or other application using the libvirt API.
       <address type='pci' domain='0x0000' bus='0x00' slot='0x0b' function='0x0'/>
     </memballoon>
   </devices>
-  <qemu:commandline>
-    <qemu:arg value='-audiodev'/>
-    <qemu:arg value='pa,id=snd0,server=/run/user/1000/pulse/native'/>
-  </qemu:commandline>
 </domain>
