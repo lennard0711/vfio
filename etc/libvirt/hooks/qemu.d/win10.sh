@@ -9,6 +9,8 @@ if [[ $1 == "win10" ]]; then
     systemctl set-property --runtime -- init.scope AllowedCPUs=2,3,4,5,6,7,10,11,12,13,14,15
     # Disable DVI-D-0
     su -l lennard0711 -c "DISPLAY=:0 xrandr --output DVI-D-0 --off"
+    # Restart barrier
+    su -l lennard0711 -c ""
   fi
   if [[ $2 == "stopped" ]]; then
     # Free all CPUs

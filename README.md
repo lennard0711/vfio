@@ -121,7 +121,7 @@ options kvm_amd nested=1
 options kvm ignore_msrs=1
 ```
 #### CPU pinning
-This currently enables CPU pinning but it doesn't stop processes from the host machine to use these cores.
+This pins specific CPUs to my VM, but it won't hinder other processes to use them. 
 
 `/etc/libvirt/qemu/win10.xml`
 ```xml
@@ -142,6 +142,20 @@ This currently enables CPU pinning but it doesn't stop processes from the host m
   <emulatorpin cpuset="0,8"/>
 </cputune>
 ```
+#### CPU isolation
+This isolates the pinned CPUs to hinder processes from the host to use them
+```bash
+systemctl set-property --runtime -- user.slice AllowedCPUs=2,3,4,5,6,7,10,11,12,13,14,15
+systemctl set-property --runtime -- system.slice AllowedCPUs=2,3,4,5,6,7,10,11,12,13,14,15
+systemctl set-property --runtime -- init.scope AllowedCPUs=2,3,4,5,6,7,10,11,12,13,14,15
+```
+This frees all CPUs to let the host use all CPUs again
+```bash
+systemctl set-property --runtime -- user.slice AllowedCPUs=0-15
+systemctl set-property --runtime -- system.slice AllowedCPUs=0-15
+systemctl set-property --runtime -- init.scope AllowedCPUs=0-15
+```
+I use these commands in my QEMU hook script [here](https://github.com/lennard0711/vfio/blob/main/etc/libvirt/hooks/qemu.d/win10.sh)
 
 ### Disks
 #### Boot Disk / SSD
@@ -177,10 +191,38 @@ user = "lennard0711"
 
 `/etc/libvirt/qemu/win10.xml`
 ```xml
-<domain xmlns:qemu="http://libvirt.org/schemas/domain/qemu/1.0" type="kvm">
-  <qemu:commandline>
-    <qemu:arg value="-audiodev"/>
-    <qemu:arg value="pa,id=snd0,server=/run/user/1000/pulse/native"/>
-  </qemu:commandline>
-</domain>
+<audio id='1' type='pulseaudio' serverName='/run/user/1000/pulse/native'/>
+```
+
+### Automatic monitor switching
+All my monitors are set to autodetect signals.
+
+My Linux GPU is connected via DVI to my gaming monitor so i just deactivate it via xrandr.
+
+To get my dual screen setup back, I just enable the DVI output again and set the HDMI output as primary display.
+
+With this QEMU hook script it switches my monitors automatically when i start/stop my VM
+
+`/etc/libvirt/hooks/qemu.d/win10.sh`
+```bash
+#!/bin/bash
+if [[ $1 == "win10" ]]; then
+  if [[ $2 == "started" ]]; then
+    # CPU isolation
+    systemctl set-property --runtime -- user.slice AllowedCPUs=2,3,4,5,6,7,10,11,12,13,14,15
+    systemctl set-property --runtime -- system.slice AllowedCPUs=2,3,4,5,6,7,10,11,12,13,14,15
+    systemctl set-property --runtime -- init.scope AllowedCPUs=2,3,4,5,6,7,10,11,12,13,14,15
+    # Disable DVI-D-0
+    su -l lennard0711 -c "DISPLAY=:0 xrandr --output DVI-D-0 --off"
+  fi
+  if [[ $2 == "stopped" ]]; then
+    # Free all CPUs
+    systemctl set-property --runtime -- user.slice AllowedCPUs=0-15
+    systemctl set-property --runtime -- system.slice AllowedCPUs=0-15
+    systemctl set-property --runtime -- init.scope AllowedCPUs=0-15
+    # Enable DVI-D-0
+    su -l lennard0711 -c "DISPLAY=:0 xrandr --output DVI-D-0 --auto --left-of HDMI-0"
+    su -l lennard0711 -c "DISPLAY=:0 xrandr --output HDMI-0 --primary"
+  fi
+fi
 ```
