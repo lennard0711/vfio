@@ -44,11 +44,9 @@ Install all packages via pacman:
 
 `sudo pacman -S libvirt qemu edk2-ovmf ebtables dnsmasq bridge-utils openbsd-netcat virt-manager`
 
-Start/Enable the libvirt service:
+Enable & start the libvirt service:
 
-`sudo systemctl start libvirtd.service`
-
-`sudo systemctl enable libvirtd.service`
+`sudo systemctl enable --now libvirtd.service`
 
 #### User Group
 Add yourself to the `libvirt` group to get passwordless access to the QEMU system socket.
