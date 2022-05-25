@@ -145,9 +145,9 @@ This pins specific CPUs to my VM, but it won't hinder other processes to use the
 #### CPU isolation
 This isolates the pinned CPUs to hinder processes from the host to use them
 ```bash
-systemctl set-property --runtime -- user.slice AllowedCPUs=2,3,4,5,6,7,10,11,12,13,14,15
-systemctl set-property --runtime -- system.slice AllowedCPUs=2,3,4,5,6,7,10,11,12,13,14,15
-systemctl set-property --runtime -- init.scope AllowedCPUs=2,3,4,5,6,7,10,11,12,13,14,15
+systemctl set-property --runtime -- user.slice AllowedCPUs=0,1,8,9
+systemctl set-property --runtime -- system.slice AllowedCPUs=0,1,8,9
+systemctl set-property --runtime -- init.scope AllowedCPUs=0,1,8,9
 ```
 This frees all CPUs to let the host use all CPUs again
 ```bash
